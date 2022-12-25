@@ -1,6 +1,4 @@
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -42,6 +40,9 @@ public class Main {
 
 
         zipFiles(MAIN_DIRECTORY + File.separator + "savegames" + File.separator + "saved_games.zip",
+                "save1.dat", "save2.dat", "save3.dat");
+
+        deleteFile(MAIN_DIRECTORY + File.separator + "savegames",
                 "save1.dat", "save2.dat", "save3.dat");
 
         openZip(MAIN_DIRECTORY + File.separator + "savegames" + File.separator + "saved_games.zip",
@@ -103,6 +104,14 @@ public class Main {
         }
     }
 
+    public static void deleteFile(String directory, String... fileNames) {
+        for (String fileName : fileNames) {
+            File file = new File(directory, fileName);
+            if (file.delete()) System.out.printf("Файл %s удален успешно\n", fileName);
+            else System.out.printf("Файл %s не был удален\n", fileName);
+        }
+    }
+
     public static void saveGame(String filePath, GameProgress gameProgress) {
         try (ObjectOutputStream objOStream = new ObjectOutputStream(new FileOutputStream(filePath))) {
             objOStream.writeObject(gameProgress);
@@ -121,8 +130,6 @@ public class Main {
                     fis.read(buffer);
                     zip.write(buffer);
                     zip.closeEntry();
-                    Files.delete(Path.of(MAIN_DIRECTORY + File.separator + "savegames"
-                            + File.separator + fileName));
                 }
             }
         } catch (IOException e) {
